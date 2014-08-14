@@ -1,0 +1,98 @@
+##dicom 像素数据描述：
+
+1：灰度图像，每个数据长度为WORD
+3：彩色图，每个数据长度为WORD 但是三个一组
+
+
+如下面是一组3X3的彩色图像（每个句号代表一个WORD）
+ 。。。  。。。 。。。
+ 。。。  。。。 。。。
+ 。。。  。。。 。。。
+若黑白图像则为
+。  。  。
+。  。  。
+。  。  。
+
+
+
+本类暂时只提供如下接口
+
+构造函数 
+	DCMReader(string fileName);
+
+	BYTE* GetDataStart(); 	//获取像素数据开头指针
+	DWORD GetDataLenth();	//获取像素数据长度（字节）
+
+##这几个数据基本是固定的 16 11 12
+##其中 bitHigh用来作为掩码对数据有效位进行获取
+##多数情况 按照WORD存取即可。
+	WORD  GetBitAlloc();	//获取像素数据位数
+	WORD  GetBitHigh();	//获取像素数据最高有效位
+	WORD  GetBitInfect();	//获取实际位数
+
+##获取行列值
+	WORD  GetCol();		//获取图像列数
+	WORD  GetRow();		//获取图像行数
+
+##下面两个用于调窗，进行显示所用。
+	WORD  GetWndPos();	//获取窗位
+	WORD  GetWndWidth();	//获取窗宽
+
+	int   GetColor();	//获取色彩数 若1则灰度图 若3则彩色 
+
+
+
+
+例子：
+struct ThreeColor 
+{
+	WORD Red;
+	WORD Green;
+	WORD Blue;
+};
+
+int main()
+{
+	//...
+	DCMReader test("filename");
+	if(!test.success)
+		return -1;
+
+
+	WORD *image = （WORD *）test.GetDataStart();//数据最小单位为字。
+
+	WORD Gray;
+
+	ThreeColor;
+
+	int col=test.GetCol(),row=test.GetRow();
+	if(GetColor==1)
+	{	
+		for(int i=0;i<row;i++)
+		{
+			for(int j=0;j<col;j++)
+			{
+				Gray=*image;
+				image+=1;
+			}
+		}
+	}
+
+
+	if(GetColor==3)
+	{	
+		for(int i=0;i<row;i++)
+		{
+			for(int j=0;j<col;j++)
+			{
+				ThreeColor.Red=*image;
+				ThreeColor.Blue=*(image+1);
+				...	
+			}
+		}
+	}
+	
+	//...
+}
+
+	
